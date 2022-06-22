@@ -13,4 +13,7 @@ Resources:
     Type: "AWS::S3::Bucket"
     Properties:
       BucketName:
-        Ref: BucketName
+        !Join
+          - '-'
+          - - !Ref "AWS::AccountId"
+            - Ref: BucketName
