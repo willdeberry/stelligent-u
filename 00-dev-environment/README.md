@@ -48,8 +48,8 @@ GitHub code repositories, and, optionally, AWS Cloud9 for your development envir
 
 #### Lab 0.1.1: AWS Access Keys
 
-Save your AWS access key and secret key to a private credentials file on your laptop before enabling 
-MFA.  You won't be able to retrieve your token if the access key and secret key are not added to your 
+Save your AWS access key and secret key to a private credentials file on your laptop before enabling
+MFA.  You won't be able to retrieve your token if the access key and secret key are not added to your
 credentials file. You will need to [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
 and then run some simple commands to confirm access using your keys:
 
@@ -76,7 +76,7 @@ aws sts get-session-token \
 /
 ```
 
-This will return json containing the temporarily credentials.(**WARNING: special characters in the 'SecretAccessKey' may not work for Windoze machines)  
+This will return json containing the temporarily credentials.(**WARNING: special characters in the 'SecretAccessKey' may not work for Windoze machines)
 
 ```shell
 "Credentials": {
@@ -130,10 +130,20 @@ authorized to in the labs account. These tokens will last approximately
 What method did you use to store the aws credentials?  What are some other
 options?
 
+> Used the `aws configure` command to manage writing to `~/.aws/credentials` for me.
+
+> Some other options would be
+>
+> 1) Manually crafting/managing `~/.aws/credentials`
+>
+> 2) Using `export` within your shell environment vs saving the credentials to a file
+
 ###### Question 0.1.1: 2
 
 Which AWS environment variable cannot be set in order to run the
 `aws sts get-session-token` command?
+
+> Nothing is listed in the man pages for `aws sts` or `aws sts get-session-token` in regards to which env variables are allowed or not. Did not find any restrictions on the AWS documentation as well.
 
 ##### Option 2: Using AWS Vault to automatically handle your temporary tokens
 
@@ -211,6 +221,10 @@ results. What does this tell you about the access the keys give you on
 your laptop and the access you have in the Cloud9 environment? What
 other methods are there to provide this level of access without using
 keys?_
+
+> 1) Didn't use cloud9 env as it failed to connect to the EC2 instance anyways. Prefer to use local + vim for IDE anyways. My assumption though is that AWS manages permissions via roles so you are not required to move the keys to all the environments manually.
+>
+> 2) You could use roles to give access and permissions with the need for keys
 
 #### Task
 

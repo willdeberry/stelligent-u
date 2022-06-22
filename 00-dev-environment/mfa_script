@@ -1,0 +1,104 @@
+#!/bin/bash
+
+
+function usage() {
+    echo "Usage: $0 [ -s SERIAL] [ -p PROFILE ] [ -t TOKEN ]" 1>&2
+}
+
+
+function abort() {
+    local message="${1}"
+
+    if [[ -n "${message}" ]]; then
+        echo "${message}"
+    fi
+
+    usage
+    exit 1
+}
+
+
+function verifyInstallations() {
+    echo 'Validating that we have the prerequisites installed...' 1>&2
+
+    if ! command -v aws &>/dev/null; then
+        abort 'Please install awscli in order to continue'
+    fi
+
+    if ! command -v jq &>/dev/null; then
+        abort 'Please install jq in order to continue'
+    fi
+}
+
+
+function gatherCredentials() {
+    local serial="${1}"
+    local token="${2}"
+    local profile="${3}"
+
+    echo 'Gathering credentials...' 1>&2
+
+    AWS_PROFILE="${profile}" aws sts get-session-token --serial-number "${serial}" --token-code "${token}" 2>/dev/null
+}
+
+
+function saveCredentials() {
+    local accessKeyId secretAccessKey sessionToken
+    local credentials="${1}"
+    local tempProfile='awsLabsTemp'
+
+    echo 'Saving credentials...' 1>&2
+
+    accessKeyId="$(echo "${credentials}" | jq -r .Credentials.AccessKeyId)"
+    secretAccessKey="$(echo "${credentials}" | jq -r .Credentials.SecretAccessKey)"
+    sessionToken="$(echo "${credentials}" | jq -r .Credentials.SessionToken)"
+
+    aws configure set aws_access_key_id "${accessKeyId}" --profile "${tempProfile}"
+    aws configure set aws_secret_access_key "${secretAccessKey}" --profile "${tempProfile}"
+    aws configure set aws_session_token "${sessionToken}" --profile "${tempProfile}"
+    aws configure set region us-east-1 --profile "${tempProfile}"
+}
+
+
+function main() {
+    local credentials serial profile token
+
+    echo 'Parsing options...'
+
+    while getopts "s:p:t:h" options; do
+        case "${options}" in
+            s)
+                serial="${OPTARG}"
+                ;;
+            p)
+                profile="${OPTARG}"
+                ;;
+            t)
+                token="${OPTARG}"
+                ;;
+            h)
+                usage
+                exit 0
+                ;;
+            :)
+                abort "Error: -${OPTARG} requires an argument."
+                ;;
+            *)
+                abort
+        esac
+    done
+
+    if [[ -z "${serial}" || -z "${profile}" || -z "${token}" ]]; then
+        abort 'Missing a parameter. Please provide all three parameters'
+    fi
+
+    verifyInstallations
+
+    credentials="$(gatherCredentials "${serial}" "${token}" "${profile}")"
+    saveCredentials "${credentials}"
+}
+
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
