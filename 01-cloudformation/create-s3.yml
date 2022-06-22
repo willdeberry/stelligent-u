@@ -1,0 +1,9 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  "Will DeBerry's S3 bucket created by Cloudformation template"
+Resources:
+  WillDeBerryS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "stelligent-u-will.deberry-labs-01"
