@@ -321,9 +321,13 @@ Delete one of the objects that you changed.
 
 _Can you still retrieve old versions of the object you removed?_
 
+> Yes, the file is gone in the console but you can use the APIs to find the version id and download a previous copy.
+
 ##### Question: Deleting All Versions
 
 _How would you delete all versions?_
+
+> Use the API to delete all version ids via `aws s3api delete-object` or `delete-objects`. You can use `list-object-versions` to find all the version ids for a specific file.
 
 #### Lab 2.3.3: Tagging S3 Resources
 
