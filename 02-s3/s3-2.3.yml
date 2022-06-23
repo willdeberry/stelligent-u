@@ -1,0 +1,76 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Will DeBerry's S3 bucket for labs"
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: stelligent-u-will.deberry.labs
+      AccessControl: PublicRead
+      Tags:
+        - Key: Name
+          Value: will.deberry.labs S3 Bucket
+        - Key: Owner
+          Value: will.deberry.labs
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: IaRule
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+          - Id: GlacierRule
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+          - Id: NonCurrentExpirationRule
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 7
+          - Id: AbortedUploadsRule
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+          - Id: ManageTagsRule
+            Status: Enabled
+            Prefix: trash/
+            TagFilters:
+              - Key: Owner
+                Value: will.deberry.labs
+            ExpirationInDays: 1
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Public
+            Effect: Allow
+            Action:
+              - 's3:Get*'
+              - 's3:List*'
+            Resource:
+              - !Sub arn:aws:s3:::${S3Bucket}
+              - !Sub arn:aws:s3:::${S3Bucket}/*
+            Principal: '*'
+          - Sid: Private
+            Effect: Deny
+            Action:
+              - 's3:*'
+            Resource:
+              - !Sub 'arn:aws:s3:::${S3Bucket}/private-file'
+            Principal: '*'
+            Condition:
+              ArnNotEquals:
+                aws:PrincipalArn: !Sub 'arn:aws:iam::${AWS::AccountId}:user/will.deberry.labs'

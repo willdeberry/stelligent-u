@@ -121,20 +121,32 @@ Add an object to your bucket:
 
 _How would you copy the contents of the directory to the top level of your bucket?_
 
+> You can copy/transfer the contents of the `data` directory using either `aws s3 cp data s3://bucketName --recursive` or `aws s3 sync data s3://bucketName`
+
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
 
+> By appending the name of the directory to create in the bucket to the s3 URL string (eg: `s3://bucketName/data`)
+
 ##### Question: Object Access
 
 _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)?_
+
+> No as the files are private by default
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
+
+> 1) Recursive by default
+>
+> 2) Always operates on directories rather than individual files whether that local directories or s3 targets.
+>
+> 3) Very similar to `rsync` which reduces the learning curve for some.
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
@@ -146,10 +158,14 @@ bucket again **without including the private file**.
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
 
+> Yes, you can use a combination of `--include` and `--exclude` to match all non private files or just `--exclude` to ignore the single private file in this case.
+
 #### Lab 2.1.4: Clean Up
 
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
+
+> Can only remove empty buckets so you have to remove all objects from within first.
 
 ### Retrospective 2.1
 
@@ -180,6 +196,8 @@ directory with the "aws s3 sync" command.
 _After this, can you download one of your files from the bucket without using
 your API credentials?_
 
+> Yes I was able to do this using my personal AWS credentials via `aws s3 cp s3://stelligent-u-will.deberry.labs/file-1 Downloads/file-1 --profile personal`
+
 #### Lab 2.2.2: Use the CLI to Restrict Access to Private Data
 
 You just made "private.txt" publicly readable. Ensure that only the
@@ -191,11 +209,15 @@ permissions of the other files.
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
 
+> `aws s3 cp data/private-file s3://bucketName --acl bucket-owner-full-control`
+
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
+
+> Yes, use the `aws s3 cp` command with the `--acl` argument passed along.
 
 #### Lab 2.2.3: Using the API from the CLI
 
@@ -224,9 +246,13 @@ file and read "private.txt".
 _What do you see when you try to read the existing bucket policy before you
 replace it?_
 
+> That by default all buckets are set to private access to owner only
+
 #### Question: Default Permissions
 
 _How do the default permissions differ from the policy you're setting?_
+
+> Default permissions are tied to the object owners by default. This lab had us open that up to all and then only authenticated AWS users for the private file.
 
 #### Lab 2.2.4: Using CloudFormation
 
@@ -295,9 +321,13 @@ Delete one of the objects that you changed.
 
 _Can you still retrieve old versions of the object you removed?_
 
+> Yes, the file is gone in the console but you can use the APIs to find the version id and download a previous copy.
+
 ##### Question: Deleting All Versions
 
 _How would you delete all versions?_
+
+> Use the API to delete all version ids via `aws s3api delete-object` or `delete-objects`. You can use `list-object-versions` to find all the version ids for a specific file.
 
 #### Lab 2.3.3: Tagging S3 Resources
 
@@ -309,6 +339,8 @@ through the CLI or the console.
 
 _Can you change a single tag on a bucket or object, or do you have to change
 all its tags at once?_
+
+> You can change a single tag at a time if desired. I updated a single tag via CFN template and updated the stack successfully.
 
 (See `aws:cloudformation:stack-id` and other AWS-managed tags.)
 
@@ -331,6 +363,8 @@ _Management Lifecycle_ tab to double-check your settings.
 
 _Can you make any of these transitions more quickly?_
 
+> You can bump up the glacier transition from 90 to 60 days but it cannot be any sooner than 30 days after a file already reaches standard-IA storage since that requires a minimum 30 days to transition from.
+
 *See the [S3 lifecycle transitions doc](https://docs.aws.amazon.com/AmazonS3/latest/dev/lifecycle-transition-general-considerations.html).*
 
 ### Stretch Challenge
@@ -343,6 +377,12 @@ expire them after 1 day.
 *How could the lifecycle and versioning features of S3 be used to manage
 the lifecycle of a web application? Would you use those features to manage
 the webapp code itself, or just the app's data?*
+
+> You could manage both the code itself and the data. That's up to the implementation details.
+>
+> A reason to manage the code would be archiving or rotating news stories or blog posts that you only want available for a specific timeframe (eg: some seasonal marketing campaign).
+>
+> Managing the data is a bit more obvious since you could rotate in and out, different assets that the site references or even help manage users in a basic sense of things.
 
 ## Lesson 2.4: S3 Object Encryption
 
@@ -364,6 +404,8 @@ S3-managed key ("SSE-S3").
 ##### Question: Encrypting Existing Objects
 
 _Do you need to re-upload all your files to get them encrypted?_
+
+> Yes, per the documentation, changing the encryption option after files exist in the bucket, only affects new files. So you'd have to reupload changes to the existing files in order for their latest version to get encrypted.
 
 #### Lab 2.4.2: SSE with KMS Keys
 
