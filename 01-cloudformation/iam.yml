@@ -29,7 +29,7 @@ Resources:
     Properties:
       ManagedPolicyArns:
         - !Ref WillDeBerryManagedPolicy
-      UserName: !Ref UserName
+      UserName: "{{resolve:ssm:will.deberry.labs.username:1}}"
 
 Outputs:
   WillDeBerryManagedPolicyARN:
