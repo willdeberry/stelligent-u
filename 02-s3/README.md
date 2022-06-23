@@ -378,6 +378,12 @@ expire them after 1 day.
 the lifecycle of a web application? Would you use those features to manage
 the webapp code itself, or just the app's data?*
 
+> You could manage both the code itself and the data. That's up to the implementation details.
+>
+> A reason to manage the code would be archiving or rotating news stories or blog posts that you only want available for a specific timeframe (eg: some seasonal marketing campaign).
+>
+> Managing the data is a bit more obvious since you could rotate in and out, different assets that the site references or even help manage users in a basic sense of things.
+
 ## Lesson 2.4: S3 Object Encryption
 
 ### Principle 2.4
