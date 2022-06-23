@@ -1,0 +1,12 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Will DeBerry's IAM User Using imports"
+
+Resources:
+  WillDeBerryManagedImportUser:
+    Type: AWS::IAM::User
+    Properties:
+      ManagedPolicyArns:
+        - !ImportValue
+          willDeBerry01CloudFormation-PolicyARN
+      UserName: willDeBerryImportLabs

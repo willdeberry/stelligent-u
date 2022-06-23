@@ -1,0 +1,19 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  "Will DeBerry's S3 bucket created by Cloudformation template"
+
+Parameters:
+  BucketName:
+    Default: stelligent-u-will.deberry-labs-01
+    Type: String
+
+Conditions:
+  IsUsEastRegion: !Equals [!Ref "AWS::Region", 'us-east-1']
+
+Resources:
+  WillDeBerryS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName:
+        !If [IsUsEastRegion, !Sub "${AWS::AccountId}-${BucketName}", !Sub "${AWS::Region}-${BucketName}"]

@@ -160,18 +160,28 @@ name.
 
 _Why do we prefer the YAML format for CFN templates?_
 
+> Less overhead and more human friendly than JSON
+
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
 
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
+> You can assign the `DeletionPolicy` attribute to individual resources.
+
 _How is that different from applying Termination Protection?_
+
+> Termination protection is applied to the entire stack or sets of stacks whereas `DeletionPolicy` can be attached to individual resources within the stacks. `DeletionPolicy` also allows you to retain resources, if desired, once the stack is deleted.
 
 #### Task: String Substitution
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
+
+> 1) `!Join ['-', 'AWS::Region', 'bucketName']` results in `us-east-1-bucketName`
+>
+> 2) `!Sub ["${AWS::Region}-bucketName"]` results in `us-east-1-bucketName`
 
 ## Lesson 1.2: Integration with Other AWS Resources
 
