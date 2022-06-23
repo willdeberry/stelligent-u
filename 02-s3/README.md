@@ -209,11 +209,15 @@ permissions of the other files.
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
 
+> `aws s3 cp data/private-file s3://bucketName --acl bucket-owner-full-control`
+
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
+
+> Yes, use the `aws s3 cp` command with the `--acl` argument passed along.
 
 #### Lab 2.2.3: Using the API from the CLI
 
@@ -242,9 +246,13 @@ file and read "private.txt".
 _What do you see when you try to read the existing bucket policy before you
 replace it?_
 
+> That by default all buckets are set to private access to owner only
+
 #### Question: Default Permissions
 
 _How do the default permissions differ from the policy you're setting?_
+
+> Default permissions are tied to the object owners by default. This lab had us open that up to all and then only authenticated AWS users for the private file.
 
 #### Lab 2.2.4: Using CloudFormation
 
