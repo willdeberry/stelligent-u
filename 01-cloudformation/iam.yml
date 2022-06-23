@@ -1,7 +1,6 @@
 ---
 AWSTemplateFormatVersion: "2010-09-09"
-Description:
-  "Will DeBerry's IAM User and Policy created by Cloudformation template"
+Description: "Will DeBerry's IAM User and Policy created by Cloudformation template"
 
 Parameters:
   UserName:
@@ -31,3 +30,10 @@ Resources:
       ManagedPolicyArns:
         - !Ref WillDeBerryManagedPolicy
       UserName: !Ref UserName
+
+Outputs:
+  WillDeBerryManagedPolicyARN:
+    Description: "The ARN of the generated IAM Managed Policy"
+    Value: !Ref WillDeBerryManagedPolicy
+    Export:
+      Name: !Sub "${AWS::StackName}-PolicyARN"
