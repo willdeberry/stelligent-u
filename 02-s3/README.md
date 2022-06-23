@@ -121,20 +121,32 @@ Add an object to your bucket:
 
 _How would you copy the contents of the directory to the top level of your bucket?_
 
+> You can copy/transfer the contents of the `data` directory using either `aws s3 cp data s3://bucketName --recursive` or `aws s3 sync data s3://bucketName`
+
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
 
+> By appending the name of the directory to create in the bucket to the s3 URL string (eg: `s3://bucketName/data`)
+
 ##### Question: Object Access
 
 _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)?_
+
+> No as the files are private by default
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
+
+> 1) Recursive by default
+>
+> 2) Always operates on directories rather than individual files whether that local directories or s3 targets.
+>
+> 3) Very similar to `rsync` which reduces the learning curve for some.
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
@@ -150,6 +162,8 @@ bucket again **without including the private file**.
 
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
+
+> Can only remove empty buckets so you have to remove all objects from within first.
 
 ### Retrospective 2.1
 
