@@ -1,0 +1,39 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Will DeBerry's S3 bucket for labs"
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: stelligent-u-will.deberry.labs
+      AccessControl: PublicRead
+      VersioningConfiguration:
+        Status: Enabled
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Public
+            Effect: Allow
+            Action:
+              - 's3:Get*'
+              - 's3:List*'
+            Resource:
+              - !Sub arn:aws:s3:::${S3Bucket}
+              - !Sub arn:aws:s3:::${S3Bucket}/*
+            Principal: '*'
+          - Sid: Private
+            Effect: Deny
+            Action:
+              - 's3:*'
+            Resource:
+              - !Sub 'arn:aws:s3:::${S3Bucket}/private-file'
+            Principal: '*'
+            Condition:
+              ArnNotEquals:
+                aws:PrincipalArn: !Sub 'arn:aws:iam::${AWS::AccountId}:user/will.deberry.labs'
