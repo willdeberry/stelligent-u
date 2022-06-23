@@ -8,8 +8,40 @@ Resources:
     Properties:
       BucketName: stelligent-u-will.deberry.labs
       AccessControl: PublicRead
+      Tags:
+        - Key: Name
+          Value: will.deberry.labs S3 Bucket
+        - Key: Owner
+          Value: will.deberry.labs
       VersioningConfiguration:
         Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: IaRule
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+          - Id: GlacierRule
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+          - Id: NonCurrentExpirationRule
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 7
+          - Id: AbortedUploadsRule
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+          - Id: ManageTagsRule
+            Status: Enabled
+            Prefix: trash/
+            TagFilters:
+              - Key: Owner
+                Value: will.deberry.labs
+            ExpirationInDays: 1
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy

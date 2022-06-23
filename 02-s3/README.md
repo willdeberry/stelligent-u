@@ -340,6 +340,8 @@ through the CLI or the console.
 _Can you change a single tag on a bucket or object, or do you have to change
 all its tags at once?_
 
+> You can change a single tag at a time if desired. I updated a single tag via CFN template and updated the stack successfully.
+
 (See `aws:cloudformation:stack-id` and other AWS-managed tags.)
 
 #### Lab 2.3.4: Object Lifecycles
@@ -360,6 +362,8 @@ _Management Lifecycle_ tab to double-check your settings.
 ##### Question: Improving Speed
 
 _Can you make any of these transitions more quickly?_
+
+> You can bump up the glacier transition from 90 to 60 days but it cannot be any sooner than 30 days after a file already reaches standard-IA storage since that requires a minimum 30 days to transition from.
 
 *See the [S3 lifecycle transitions doc](https://docs.aws.amazon.com/AmazonS3/latest/dev/lifecycle-transition-general-considerations.html).*
 
