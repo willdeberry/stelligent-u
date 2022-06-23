@@ -1,0 +1,32 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "will.deberry IAM Role via CFN"
+
+Resources:
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: IAMReadOnly
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iam:GenerateCredentialReport
+                  - iam:GenerateServiceLastAccessedDetails
+                  - iam:Get*
+                  - iam:List*
+                  - iam:SimulateCustomPolicy
+                  - iam:SimulatePrincipalPolicy
+                Resource: '*'
+      Description: will.deberry iam role
+      RoleName: will.deberry-iam-role
