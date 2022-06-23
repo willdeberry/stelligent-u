@@ -42,6 +42,11 @@ Resources:
               - Key: Owner
                 Value: will.deberry.labs
             ExpirationInDays: 1
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy

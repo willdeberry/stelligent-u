@@ -405,6 +405,8 @@ S3-managed key ("SSE-S3").
 
 _Do you need to re-upload all your files to get them encrypted?_
 
+> Yes, per the documentation, changing the encryption option after files exist in the bucket, only affects new files. So you'd have to reupload changes to the existing files in order for their latest version to get encrypted.
+
 #### Lab 2.4.2: SSE with KMS Keys
 
 Change your bucket policy to require KMS encryption for all objects.
