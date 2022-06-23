@@ -196,6 +196,8 @@ directory with the "aws s3 sync" command.
 _After this, can you download one of your files from the bucket without using
 your API credentials?_
 
+> Yes I was able to do this using my personal AWS credentials via `aws s3 cp s3://stelligent-u-will.deberry.labs/file-1 Downloads/file-1 --profile personal`
+
 #### Lab 2.2.2: Use the CLI to Restrict Access to Private Data
 
 You just made "private.txt" publicly readable. Ensure that only the
