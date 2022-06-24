@@ -172,6 +172,8 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+> Provide the ARNs as outputs to the stack and then you'd be able to `desccribe-stack` and retrieve the infomation via the CLI.
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per

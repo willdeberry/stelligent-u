@@ -35,3 +35,12 @@ Resources:
         - arn:aws:iam::aws:policy/IAMReadOnlyAccess
         - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
       RoleName: will.deberry-iam-role2
+
+Outputs:
+  IAMRoleARN:
+    Description: IAMRole ARN
+    Value: !GetAtt IAMRole.Arn
+
+  IAMRole2ARN:
+    Description: IAMRole2 ARN
+    Value: !GetAtt IAMRole2.Arn
