@@ -1,0 +1,49 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "will.deberry IAM Lab 3.3"
+
+Resources:
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:user/will.deberry.labs
+            Action:
+              - sts:AssumeRole
+      Description: will.deberry iam role
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      RoleName: will.deberry-iam-role
+
+  S3Bucket1:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: will.deberry-bucket1
+      Tags:
+        - Key: Owner
+          Value: will.deberry.labs
+
+  S3Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: will.deberry-bucket2
+      Tags:
+        - Key: Owner
+          Value: will.deberry.labs
+
+Outputs:
+  IAMRoleARN:
+    Description: IAMRole ARN
+    Value: !GetAtt IAMRole.Arn
+
+  S3Bucket1:
+    Description: S3Bucket1 Name
+    Value: !Ref S3Bucket1
+
+  S3Bucket2:
+    Description: S3Bucket2 Name
+    Value: !Ref S3Bucket2

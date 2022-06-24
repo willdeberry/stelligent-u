@@ -352,7 +352,45 @@ demonstrate you have full access to each bucket with this new role.
   - list the contents of your 2 new buckets
   - upload a file to each new bucket
 
+  > ```
+  > aws-labs s3 sync data s3://will.deberry-bucket1
+  > upload: data/file-1 to s3://will.deberry-bucket1/file-1
+  > ```
+  > ```
+  > aws-labs s3 sync data s3://will.deberry-bucket2
+  > upload: data/file-1 to s3://will.deberry-bucket2/file-1
+  > ```
+
+  > ```
+  > aws-labs s3 ls s3://will.deberry-bucket1
+  > 2022-06-24 13:46:12          0 file-1
+  > ```
+  > ```
+  > aws-labs s3 ls s3://will.deberry-bucket2
+  > 2022-06-24 13:46:14          0 file-1
+  > ```
+
 - Assume the new role and repeat those two checks as that role.
+
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket1
+  > upload: data/file-1 to s3://will.deberry-bucket1/file-2
+  > ```
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket2
+  > upload: data/file-1 to s3://will.deberry-bucket2/file-2
+  > ```
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1
+  > 2022-06-24 13:46:12          0 file-1
+  > 2022-06-24 13:50:12          0 file-2
+  > ```
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket2
+  > 2022-06-24 13:46:14          0 file-1
+  > 2022-06-24 13:50:15          0 file-2
+  > ```
 
 #### Lab 3.3.2: Resource restrictions
 
