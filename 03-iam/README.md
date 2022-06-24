@@ -451,12 +451,23 @@ that grants list access only to objects that start with "lebowski/".
   - If it *worked*, fix your policy and update the stack until this
     fails.
 
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1
+  > An error occurred (AccessDenied) when calling the ListObjectsV2 operation: Access Denied
+  > ```
+
 - Try to list that same file but now with the proper object key
   prefix.
 
   - If it *doesn't work*, troubleshoot why and fix either the role's
     policy or the list command syntax until you are able to
     list a file.
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1/lebowski/
+  > 2022-06-24 14:43:19          0
+  > 2022-06-24 14:43:45          0 file-1
+  > ```
 
 ### Retrospective
 
@@ -472,6 +483,18 @@ Role?_
 
 Code at least one new positive and one new negative test.
 
+> Positive: Validate that we can list an object directly within the prefix `lebowski`
+> ```
+> aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1/lebowski/file-1
+> 2022-06-24 14:43:45          0 file-1
+> ```
+
+> Negative: Validate we cannot download anything from the `lebowski` prefix
+> ```
+> aws-vault exec assume -- aws s3 sync s3://will.deberry-bucket1/lebowski/ .
+> download failed: s3://will.deberry-bucket1/lebowski/file-1 to ./file-1 An error occurred (AccessDenied) when calling the GetObject operation: Access Denied
+> ```
+
 #### Question: Limiting Uploads
 
 _Is it possible to limit uploads of objects with a specific prefix (e.g.
@@ -482,6 +505,8 @@ could this be accomplished?_
 
 Research and review the best method to limit uploads with a specific prefix to
 an S3 bucket.
+
+> I was able to accomplish this by adjusting the `Resource` restraints rather than the `Conditions`. Conditions allowed me to attempt to `sync` but would still block me.
 
 ## Further Reading
 

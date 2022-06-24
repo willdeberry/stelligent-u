@@ -19,21 +19,20 @@ Resources:
         - PolicyName: will.deberry-S3BucketPolicy
           PolicyDocument:
             Statement:
-              - Sid: S3Bucket1ReadOnly
+              - Sid: S3Bucket1ListOnlyPrefix
                 Effect: Allow
                 Action:
-                  - s3:Get*
-                  - s3:List*
+                  - s3:*
                 Resource:
                   - !GetAtt S3Bucket1.Arn
-                  - !Sub '${S3Bucket1.Arn}/*'
+                  - !Sub ${S3Bucket1.Arn}/lebowski/*
               - Sid: S3Bucket2Admin
                 Effect: Allow
                 Action:
                   - s3:*
                 Resource:
                   - !GetAtt S3Bucket2.Arn
-                  - !Sub '${S3Bucket2.Arn}/*'
+                  - !Sub ${S3Bucket2.Arn}/*
       RoleName: will.deberry-iam-role
 
   S3Bucket1:
