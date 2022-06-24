@@ -291,8 +291,16 @@ Clean up. Take the actions necessary to delete the stack.
 #### Question: Inline vs Customer Managed Policies
 
 _In the context of an AWS User or Role, what is the difference between
-an inline policy and a customer managed policy? What are the differences
+an inline policy and a customer managed policy?
+
+> Inline: means it is bundled and baked into the resource it is tied to whether that is a user, group or role. It does **not** create a separate policy within the IAM space and does not allow any other resources to utilize it.
+>
+> Customer: A standalone policy created and added to the policy listing of IAM. This allows the policy to be attached/used where ever it needs to be used and however many times it needs to be used.
+
+What are the differences
 between a customer managed policy and an AWS managed policy?_
+
+> Customer is managed by the user or account holder to the AWS organization. It is a customized policy tailored for their needs and thus needs to be maintained by the customer as well. AWS managed polcies are pre-baked policies that are crafted and maintained by AWS. This allows the customers to use these policies and not have to worry about keeping them up to date as new services are introduced into the AWS ecosystem.
 
 #### Question: Role Assumption
 
@@ -301,6 +309,10 @@ mixed with those of the role being assumed?
 Describe how that could easily be demonstrated with both a
 [positive and negative testing](https://www.guru99.com/positive-vs-negative-testing.html)
 approach._
+
+> No, they are not mixed with the source profile. When assuming a role, you only have the permissions of that assumed role, nothing more.
+>
+> This can be tested much like a previous lab above when we tried to run S3 commands on a role that only had readOnly access to IAM. It came back as `AccessDenied` and is an example of a negative test. A positive test is if the role grants you IAM readOnly abilities and you can then successfully perform List/Get operations but not be able to alter anything.
 
 ## Lesson 3.3: Fine-Grained Controls With Policies
 
