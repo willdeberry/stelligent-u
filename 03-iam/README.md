@@ -122,6 +122,10 @@ policy:
 
 - Update the Stack. *Did the stack update work?*
 
+> No, it failed to update with error:
+>
+> `CloudFormation cannot update a stack when a custom-named resource requires replacing. Rename will.deberry-iam-policy and update the stack again`
+
   - Query the stack to determine its state.
   - If the stack update was not successful,
     [troubleshoot and determine why](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement).
@@ -168,6 +172,8 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+> Provide the ARNs as outputs to the stack and then you'd be able to `desccribe-stack` and retrieve the infomation via the CLI.
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per
@@ -212,6 +218,22 @@ your User to assume that role.
 - Using the AWS CLI, assume that new role. If this fails, take note of
   the error you receive, diagnose the issue and fix it.
 
+> ```
+> aws-labs sts assume-role --role-arn arn:aws:iam::324320755747:role/will.deberry-iam-role --role-session-name will.deberry-assume-role
+> {
+>    "Credentials": {
+>        "AccessKeyId": "*****",
+>        "SecretAccessKey": "*****",
+>        "SessionToken": "IQoJb3JpZ2l...",
+>        "Expiration": "2022-06-24T16:13:23+00:00"
+>    },
+>    "AssumedRoleUser": {
+>        "AssumedRoleId": "AROAUXAYGAAR6IB5H6L55:will.deberry-assume-role",
+>        "Arn": "arn:aws:sts::324320755747:assumed-role/will.deberry-iam-role/will.deberry-assume-role"
+>    }
+>}
+> ```
+
 *Hint: Instead of setting up a new profile in your \~/.aws/credentials
 file, use [aws sts assume-role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html#using-temp-creds-sdk-cli).
 It's a valuable mechanism you'll use often through the API, and it's good to
@@ -230,6 +252,13 @@ Test the capabilities of this new Role.
   - If it succeeded, troubleshoot how Read access allowed the role
     to create a bucket.
 
+> Did _not_ succeed as expected. Returned `AccessDenied` error.
+>
+> ```
+> aws-vault exec readonly -- aws s3 mb s3://will.deberry-bucket --region us-east-1
+> make_bucket failed: s3://will.deberry-bucket An error occurred (AccessDenied) when calling the CreateBucket operation: Access Denied
+> ```
+
 #### Lab 3.2.3: Add privileges to the role
 
 Update the CFN template to give this role the ability to upload to S3
@@ -247,6 +276,12 @@ buckets.
 - If it failed, troubleshoot the error iteratively until the role is
   able to upload a file to the bucket.
 
+> Worked as expected.
+>
+> `aws-vault exec readonly -- aws s3 sync data s3://will.deberry-labs-bucket`
+>
+> `upload: data/file-1 to s3://will.deberry-labs-bucket/file-1`
+
 #### Lab 3.2.4: Clean up
 
 Clean up. Take the actions necessary to delete the stack.
@@ -256,8 +291,16 @@ Clean up. Take the actions necessary to delete the stack.
 #### Question: Inline vs Customer Managed Policies
 
 _In the context of an AWS User or Role, what is the difference between
-an inline policy and a customer managed policy? What are the differences
+an inline policy and a customer managed policy?
+
+> Inline: means it is bundled and baked into the resource it is tied to whether that is a user, group or role. It does **not** create a separate policy within the IAM space and does not allow any other resources to utilize it.
+>
+> Customer: A standalone policy created and added to the policy listing of IAM. This allows the policy to be attached/used where ever it needs to be used and however many times it needs to be used.
+
+What are the differences
 between a customer managed policy and an AWS managed policy?_
+
+> Customer is managed by the user or account holder to the AWS organization. It is a customized policy tailored for their needs and thus needs to be maintained by the customer as well. AWS managed polcies are pre-baked policies that are crafted and maintained by AWS. This allows the customers to use these policies and not have to worry about keeping them up to date as new services are introduced into the AWS ecosystem.
 
 #### Question: Role Assumption
 
@@ -266,6 +309,10 @@ mixed with those of the role being assumed?
 Describe how that could easily be demonstrated with both a
 [positive and negative testing](https://www.guru99.com/positive-vs-negative-testing.html)
 approach._
+
+> No, they are not mixed with the source profile. When assuming a role, you only have the permissions of that assumed role, nothing more.
+>
+> This can be tested much like a previous lab above when we tried to run S3 commands on a role that only had readOnly access to IAM. It came back as `AccessDenied` and is an example of a negative test. A positive test is if the role grants you IAM readOnly abilities and you can then successfully perform List/Get operations but not be able to alter anything.
 
 ## Lesson 3.3: Fine-Grained Controls With Policies
 
@@ -305,7 +352,45 @@ demonstrate you have full access to each bucket with this new role.
   - list the contents of your 2 new buckets
   - upload a file to each new bucket
 
+  > ```
+  > aws-labs s3 sync data s3://will.deberry-bucket1
+  > upload: data/file-1 to s3://will.deberry-bucket1/file-1
+  > ```
+  > ```
+  > aws-labs s3 sync data s3://will.deberry-bucket2
+  > upload: data/file-1 to s3://will.deberry-bucket2/file-1
+  > ```
+
+  > ```
+  > aws-labs s3 ls s3://will.deberry-bucket1
+  > 2022-06-24 13:46:12          0 file-1
+  > ```
+  > ```
+  > aws-labs s3 ls s3://will.deberry-bucket2
+  > 2022-06-24 13:46:14          0 file-1
+  > ```
+
 - Assume the new role and repeat those two checks as that role.
+
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket1
+  > upload: data/file-1 to s3://will.deberry-bucket1/file-2
+  > ```
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket2
+  > upload: data/file-1 to s3://will.deberry-bucket2/file-2
+  > ```
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1
+  > 2022-06-24 13:46:12          0 file-1
+  > 2022-06-24 13:50:12          0 file-2
+  > ```
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket2
+  > 2022-06-24 13:46:14          0 file-1
+  > 2022-06-24 13:50:15          0 file-2
+  > ```
 
 #### Lab 3.3.2: Resource restrictions
 
@@ -318,11 +403,38 @@ read-only access to the other.
 - Assume the new role and perform these steps as that role:
 
   - List the contents of your 2 new buckets.
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1
+  > 2022-06-24 13:46:12          0 file-1
+  > 2022-06-24 13:50:12          0 file-2
+  > ```
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket2
+  > 2022-06-24 13:46:12          0 file-1
+  > 2022-06-24 13:50:12          0 file-2
+  > ```
+
   - Upload a file to each new bucket.
+
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket1
+  > upload failed: data/file-3 to s3://will.deberry-bucket1/file-3 An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+  > ```
+
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket2
+  > upload: data/file-3 to s3://will.deberry-bucket2/file-3
+  > ```
 
 *Were there any errors? If so, take note of them.*
 
+> Yes, captured above
+
 *What were the results you expected, based on the role's policy?*
+
+> Results were as expected. Applied readOnly rights for bucket1 and was able to read but not write/upload to it. Whereas the role still allowed full access to bucket2 thus reading and writing/uploading worked.
 
 #### Lab 3.3.3: Conditional restrictions
 
@@ -339,12 +451,23 @@ that grants list access only to objects that start with "lebowski/".
   - If it *worked*, fix your policy and update the stack until this
     fails.
 
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1
+  > An error occurred (AccessDenied) when calling the ListObjectsV2 operation: Access Denied
+  > ```
+
 - Try to list that same file but now with the proper object key
   prefix.
 
   - If it *doesn't work*, troubleshoot why and fix either the role's
     policy or the list command syntax until you are able to
     list a file.
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1/lebowski/
+  > 2022-06-24 14:43:19          0
+  > 2022-06-24 14:43:45          0 file-1
+  > ```
 
 ### Retrospective
 
@@ -360,6 +483,18 @@ Role?_
 
 Code at least one new positive and one new negative test.
 
+> Positive: Validate that we can list an object directly within the prefix `lebowski`
+> ```
+> aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1/lebowski/file-1
+> 2022-06-24 14:43:45          0 file-1
+> ```
+
+> Negative: Validate we cannot download anything from the `lebowski` prefix
+> ```
+> aws-vault exec assume -- aws s3 sync s3://will.deberry-bucket1/lebowski/ .
+> download failed: s3://will.deberry-bucket1/lebowski/file-1 to ./file-1 An error occurred (AccessDenied) when calling the GetObject operation: Access Denied
+> ```
+
 #### Question: Limiting Uploads
 
 _Is it possible to limit uploads of objects with a specific prefix (e.g.
@@ -370,6 +505,8 @@ could this be accomplished?_
 
 Research and review the best method to limit uploads with a specific prefix to
 an S3 bucket.
+
+> I was able to accomplish this by adjusting the `Resource` restraints rather than the `Conditions`. Conditions allowed me to attempt to `sync` but would still block me.
 
 ## Further Reading
 

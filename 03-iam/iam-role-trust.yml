@@ -1,0 +1,26 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "will.deberry IAM Trust Lab"
+
+Resources:
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action:
+              - sts:AssumeRole
+      Description: will.deberry iam role
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      RoleName: will.deberry-iam-role
+
+Outputs:
+  IAMRoleARN:
+    Description: IAMRole ARN
+    Value: !GetAtt IAMRole.Arn

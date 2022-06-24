@@ -1,0 +1,46 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "will.deberry IAM Role via CFN"
+
+Resources:
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action:
+              - sts:AssumeRole
+      Description: will.deberry iam role
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+      RoleName: will.deberry-iam-role
+
+  IAMRole2:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action:
+              - sts:AssumeRole
+      Description: will.deberry iam role2
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
+      RoleName: will.deberry-iam-role2
+
+Outputs:
+  IAMRoleARN:
+    Description: IAMRole ARN
+    Value: !GetAtt IAMRole.Arn
+
+  IAMRole2ARN:
+    Description: IAMRole2 ARN
+    Value: !GetAtt IAMRole2.Arn
