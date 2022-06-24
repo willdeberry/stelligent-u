@@ -14,19 +14,25 @@ Resources:
               AWS: !Sub '${AWS::AccountId}'
             Action:
               - sts:AssumeRole
-      Policies:
-        - PolicyName: IAMReadOnly
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - iam:GenerateCredentialReport
-                  - iam:GenerateServiceLastAccessedDetails
-                  - iam:Get*
-                  - iam:List*
-                  - iam:SimulateCustomPolicy
-                  - iam:SimulatePrincipalPolicy
-                Resource: '*'
       Description: will.deberry iam role
       RoleName: will.deberry-iam-role
+
+  IAMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: will.deberry-iam-read-only-managed
+      ManagedPolicyName: will.deberry-iam-policy
+      Roles:
+        - !Ref IAMRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - iam:GenerateCredentialReport
+              - iam:GenerateServiceLastAccessedDetails
+              - iam:Get*
+              - iam:List*
+              - iam:SimulateCustomPolicy
+              - iam:SimulatePrincipalPolicy
+            Resource: '*'
