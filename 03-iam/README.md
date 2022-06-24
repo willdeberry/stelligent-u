@@ -276,6 +276,12 @@ buckets.
 - If it failed, troubleshoot the error iteratively until the role is
   able to upload a file to the bucket.
 
+> Worked as expected.
+>
+> `aws-vault exec readonly -- aws s3 sync data s3://will.deberry-labs-bucket`
+>
+> `upload: data/file-1 to s3://will.deberry-labs-bucket/file-1`
+
 #### Lab 3.2.4: Clean up
 
 Clean up. Take the actions necessary to delete the stack.

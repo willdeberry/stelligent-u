@@ -17,6 +17,7 @@ Resources:
       Description: will.deberry iam role
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
       RoleName: will.deberry-iam-role
 
 Outputs:
