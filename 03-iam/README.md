@@ -122,6 +122,10 @@ policy:
 
 - Update the Stack. *Did the stack update work?*
 
+> No, it failed to update with error:
+>
+> `CloudFormation cannot update a stack when a custom-named resource requires replacing. Rename will.deberry-iam-policy and update the stack again`
+
   - Query the stack to determine its state.
   - If the stack update was not successful,
     [troubleshoot and determine why](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement).
