@@ -403,11 +403,38 @@ read-only access to the other.
 - Assume the new role and perform these steps as that role:
 
   - List the contents of your 2 new buckets.
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket1
+  > 2022-06-24 13:46:12          0 file-1
+  > 2022-06-24 13:50:12          0 file-2
+  > ```
+
+  > ```
+  > aws-vault exec assume -- aws s3 ls s3://will.deberry-bucket2
+  > 2022-06-24 13:46:12          0 file-1
+  > 2022-06-24 13:50:12          0 file-2
+  > ```
+
   - Upload a file to each new bucket.
+
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket1
+  > upload failed: data/file-3 to s3://will.deberry-bucket1/file-3 An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+  > ```
+
+  > ```
+  > aws-vault exec assume -- aws s3 sync data s3://will.deberry-bucket2
+  > upload: data/file-3 to s3://will.deberry-bucket2/file-3
+  > ```
 
 *Were there any errors? If so, take note of them.*
 
+> Yes, captured above
+
 *What were the results you expected, based on the role's policy?*
+
+> Results were as expected. Applied readOnly rights for bucket1 and was able to read but not write/upload to it. Whereas the role still allowed full access to bucket2 thus reading and writing/uploading worked.
 
 #### Lab 3.3.3: Conditional restrictions
 
