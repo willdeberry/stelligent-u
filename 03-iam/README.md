@@ -218,6 +218,22 @@ your User to assume that role.
 - Using the AWS CLI, assume that new role. If this fails, take note of
   the error you receive, diagnose the issue and fix it.
 
+> ```
+> aws-labs sts assume-role --role-arn arn:aws:iam::324320755747:role/will.deberry-iam-role --role-session-name will.deberry-assume-role
+> {
+>    "Credentials": {
+>        "AccessKeyId": "*****",
+>        "SecretAccessKey": "*****",
+>        "SessionToken": "IQoJb3JpZ2l...",
+>        "Expiration": "2022-06-24T16:13:23+00:00"
+>    },
+>    "AssumedRoleUser": {
+>        "AssumedRoleId": "AROAUXAYGAAR6IB5H6L55:will.deberry-assume-role",
+>        "Arn": "arn:aws:sts::324320755747:assumed-role/will.deberry-iam-role/will.deberry-assume-role"
+>    }
+>}
+> ```
+
 *Hint: Instead of setting up a new profile in your \~/.aws/credentials
 file, use [aws sts assume-role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html#using-temp-creds-sdk-cli).
 It's a valuable mechanism you'll use often through the API, and it's good to
