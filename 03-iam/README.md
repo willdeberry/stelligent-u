@@ -252,6 +252,13 @@ Test the capabilities of this new Role.
   - If it succeeded, troubleshoot how Read access allowed the role
     to create a bucket.
 
+> Did _not_ succeed as expected. Returned `AccessDenied` error.
+>
+> ```
+> aws-vault exec readonly -- aws s3 mb s3://will.deberry-bucket --region us-east-1
+> make_bucket failed: s3://will.deberry-bucket An error occurred (AccessDenied) when calling the CreateBucket operation: Access Denied
+> ```
+
 #### Lab 3.2.3: Add privileges to the role
 
 Update the CFN template to give this role the ability to upload to S3
