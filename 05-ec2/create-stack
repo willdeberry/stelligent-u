@@ -1,0 +1,8 @@
+#!/bin/bash
+
+STACK_NAME='willDeBerryStack'
+TEMPLATE='ec2.yml'
+
+cfn-lint "${TEMPLATE}"
+aws-vault exec labs -- aws cloudformation create-stack --stack-name "${STACK_NAME}" --template-body "file://${TEMPLATE}"
+aws-vault exec labs -- aws cloudformation wait stack-create-complete --stack-name "${STACK_NAME}"

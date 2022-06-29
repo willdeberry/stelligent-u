@@ -131,6 +131,10 @@ Create the stack:
 - Use the AWS CLI to describe the stack's resources, then use the AWS
   CLI to describe each instance that was created.
 
+  > `aws-labs cloudformation describe-stacks --stack-name willDeBerryStack`
+
+  > `aws-labs ec2 describe-instances --instance-ids i-097b0dd06a50a80c4 i-0b194d3cbf9420f0e`
+
 #### Lab 5.1.3: Update Your Stack
 
 Change the AMI ID for the Windows instance to instead launch an AMI for
@@ -141,6 +145,10 @@ Windows Server 2012 R2:
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
 
+  > It was deleted since changing the AMI requires a new instance be created per the docs.
+  >
+  > `Requested update requires the creation of a new physical resource; hence creating one.`
+
 #### Lab 5.1.4: Teardown
 
 There is usually some delay between initiating an instance's termination
@@ -148,6 +156,8 @@ and the instance being considered eliminated altogether.
 
 - Delete your Stack. Immediately after initiating Stack deletion, see
   if you can query your instance states.
+
+  > Commands still work during the delay and stop working once the instances have been nuked.
 
 ### Retrospective 5.1
 
@@ -164,6 +174,26 @@ values via a scripted mechanism.
 _When updating a Stack containing an EC2 instance,
 [what other changes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html)
 will cause the same thing to occur as in Lab 5.1.3?_
+
+> The following will cause a replacement to occur:
+> - AvailabilityZone
+> - CpuOptions
+> - ElasticGpuSpecifications
+> - ElasticInferenceAccelerators
+> - EnclaveOptions
+> - HibernationOptions
+> - HostResourceGroupArn
+> - ImageId
+> - Ipv6AddressCount
+> - Ipv6Addresses
+> - KeyName
+> - LaunchTemplate
+> - LicenseSpecifications
+> - NetworkInterfaces
+> - PlacementGroupName
+> - PrivateIpAddress
+> - SecurityGroups
+> - SubnetId
 
 ## Lesson 5.2: Instance Access
 
@@ -200,6 +230,8 @@ function.
 
 Try pinging that IP address. Does it work?
 
+> Not currently
+
 - Using the CFN template, create a Security Group enabling
   [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol).
 
@@ -209,6 +241,8 @@ Try pinging that IP address. Does it work?
 
 Can you ping your instance now? If not, troubleshoot and fix the issue
 using your CFN template.
+
+> Wasn't able to ping even after this change until I added a default route into the subnet. We are good to go now.
 
 #### Lab 5.2.2: SSH Keys
 
@@ -238,6 +272,8 @@ Can you SSH into the instance?
 
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
+
+> SSH is working.
 
 ### Retrospective 5.2
 
@@ -280,6 +316,8 @@ the [CloudWatch Agent on instances provides an extended set of metrics](https://
 
 - Use the AWS Console to fetch and record the default instance metrics.
 
+<img src="images/consoleMetrics.png" width="450">
+
 #### Lab 5.3.2: Installing the CloudWatch Agent
 
 Let's [install the CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)
@@ -312,6 +350,8 @@ Userdata docs to debug.
 
 Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
+
+<img src="images/afterMetrics.png" width="450">
 
 ##### Task: Private Subnet
 
