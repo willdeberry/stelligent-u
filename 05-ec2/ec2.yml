@@ -71,7 +71,9 @@ Resources:
     Type: AWS::EC2::LaunchTemplate
     Properties:
       LaunchTemplateData:
-        InstanceType: t3.micro
+        IamInstanceProfile:
+          Name: !Ref CloudWatchInstanceProfile
+        InstanceType: t2.micro
         KeyName: !Ref KeyPair
         Placement:
           Tenancy: default
@@ -95,6 +97,12 @@ Resources:
       Tags:
         - Key: Name
           Value: willDeBerry-ubuntu
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
+          dpkg -i /tmp/amazon-cloudwatch-agent.deb
+          amazon-cloudwatch-agent-ctl -a start
 
   UbuntuEIP:
     Type: AWS::EC2::EIP
@@ -124,6 +132,28 @@ Resources:
         - Key: Name
           Value: willDeBerry-sg
       VpcId: !Ref VPC
+
+  CloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      RoleName: willDeBerry-cloudwatch-role
+
+  CloudWatchInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref CloudWatchRole
 
 Outputs:
   UbuntuEC2Id:

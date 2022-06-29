@@ -316,6 +316,8 @@ the [CloudWatch Agent on instances provides an extended set of metrics](https://
 
 - Use the AWS Console to fetch and record the default instance metrics.
 
+<img src="images/consoleMetrics.png" width="450">
+
 #### Lab 5.3.2: Installing the CloudWatch Agent
 
 Let's [install the CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)
@@ -348,6 +350,8 @@ Userdata docs to debug.
 
 Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
+
+<img src="images/afterMetrics.png" width="450">
 
 ##### Task: Private Subnet
 
