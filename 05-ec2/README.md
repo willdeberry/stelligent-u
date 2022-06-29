@@ -273,6 +273,8 @@ Can you SSH into the instance?
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
 
+> SSH is working.
+
 ### Retrospective 5.2
 
 For more information on resolving connection issues, see the

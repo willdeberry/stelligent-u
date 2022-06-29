@@ -7,6 +7,10 @@ Parameters:
     Type: String
     Default: ami-052efd3df9dad4825
 
+  KeyPair:
+    Type: String
+    Default: will.deberry.labs
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -68,7 +72,7 @@ Resources:
     Properties:
       LaunchTemplateData:
         InstanceType: t3.micro
-        KeyName: will.deberry.labs
+        KeyName: !Ref KeyPair
         Placement:
           Tenancy: default
         SecurityGroupIds:
@@ -104,14 +108,21 @@ Resources:
   UbuntuSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow ICMP
-      GroupName: willDeBerry-sg
+      GroupDescription: Allow ICMP and SSH
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           Description: Allow ICMP
           FromPort: 8
           IpProtocol: icmp
           ToPort: -1
+        - CidrIp: 0.0.0.0/0
+          Description: Allow SSH
+          FromPort: 22
+          IpProtocol: 6
+          ToPort: 22
+      Tags:
+        - Key: Name
+          Value: willDeBerry-sg
       VpcId: !Ref VPC
 
 Outputs:
