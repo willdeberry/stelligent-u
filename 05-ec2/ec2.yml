@@ -88,6 +88,18 @@ Resources:
 
   UbuntuEC2:
     Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          commands:
+            apt-update:
+              command: 'apt-get update'
+            download:
+              command: wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
+            install:
+              command: dpkg -i /tmp/amazon-cloudwatch-agent.deb
+            run:
+              command: amazon-cloudwatch-agent-ctl -a start
     Properties:
       ImageId: !Ref UbuntuId
       LaunchTemplate:
@@ -100,9 +112,9 @@ Resources:
       UserData:
         Fn::Base64: |
           #!/bin/bash
-          wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
-          dpkg -i /tmp/amazon-cloudwatch-agent.deb
-          amazon-cloudwatch-agent-ctl -a start
+          wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz
+          python3 -m easy_install --script-dir /opt/aws/bin aws-cfn-bootstrap-py3-latest.tar.gz
+          cfn-init -c config
 
   UbuntuEIP:
     Type: AWS::EC2::EIP
