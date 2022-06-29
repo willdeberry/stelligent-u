@@ -2,6 +2,15 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Module 5 Stack
 
+Parameters:
+  WindowsId:
+    Type: String
+    Default: ami-09e13647920b2ba1d
+
+  UbuntuId:
+    Type: String
+    Default: ami-052efd3df9dad4825
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -42,7 +51,7 @@ Resources:
   WindowsEC2:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-03e42a81d67097502
+      ImageId: !Ref WindowsId
       LaunchTemplate:
         LaunchTemplateId: !Ref EC2LaunchTemplate
         Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
@@ -54,7 +63,7 @@ Resources:
   UbuntuEC2:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-052efd3df9dad4825
+      ImageId: !Ref UbuntuId
       LaunchTemplate:
         LaunchTemplateId: !Ref EC2LaunchTemplate
         Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber

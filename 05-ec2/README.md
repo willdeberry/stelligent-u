@@ -145,6 +145,10 @@ Windows Server 2012 R2:
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
 
+  > It was deleted since changing the AMI requires a new instance be created per the docs.
+  >
+  > `Requested update requires the creation of a new physical resource; hence creating one.`
+
 #### Lab 5.1.4: Teardown
 
 There is usually some delay between initiating an instance's termination
@@ -152,6 +156,8 @@ and the instance being considered eliminated altogether.
 
 - Delete your Stack. Immediately after initiating Stack deletion, see
   if you can query your instance states.
+
+  > Commands still work during the delay and stop working once the instances have been nuked.
 
 ### Retrospective 5.1
 
@@ -168,6 +174,26 @@ values via a scripted mechanism.
 _When updating a Stack containing an EC2 instance,
 [what other changes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html)
 will cause the same thing to occur as in Lab 5.1.3?_
+
+> The following will cause a replacement to occur:
+> - AvailabilityZone
+> - CpuOptions
+> - ElasticGpuSpecifications
+> - ElasticInferenceAccelerators
+> - EnclaveOptions
+> - HibernationOptions
+> - HostResourceGroupArn
+> - ImageId
+> - Ipv6AddressCount
+> - Ipv6Addresses
+> - KeyName
+> - LaunchTemplate
+> - LicenseSpecifications
+> - NetworkInterfaces
+> - PlacementGroupName
+> - PrivateIpAddress
+> - SecurityGroups
+> - SubnetId
 
 ## Lesson 5.2: Instance Access
 

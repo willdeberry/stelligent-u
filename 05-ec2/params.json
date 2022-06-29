@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "WindowsId",
+        "ParameterValue": "ami-09e13647920b2ba1d"
+    },
+    {
+        "ParameterKey": "UbuntuId",
+        "ParameterValue": "ami-052efd3df9dad4825"
+    }
+]
