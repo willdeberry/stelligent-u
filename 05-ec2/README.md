@@ -230,6 +230,8 @@ function.
 
 Try pinging that IP address. Does it work?
 
+> Not currently
+
 - Using the CFN template, create a Security Group enabling
   [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol).
 
@@ -239,6 +241,8 @@ Try pinging that IP address. Does it work?
 
 Can you ping your instance now? If not, troubleshoot and fix the issue
 using your CFN template.
+
+> Wasn't able to ping even after this change until I added a default route into the subnet. We are good to go now.
 
 #### Lab 5.2.2: SSH Keys
 
