@@ -131,6 +131,10 @@ Create the stack:
 - Use the AWS CLI to describe the stack's resources, then use the AWS
   CLI to describe each instance that was created.
 
+  > `aws-labs cloudformation describe-stacks --stack-name willDeBerryStack`
+
+  > `aws-labs ec2 describe-instances --instance-ids i-097b0dd06a50a80c4 i-0b194d3cbf9420f0e`
+
 #### Lab 5.1.3: Update Your Stack
 
 Change the AMI ID for the Windows instance to instead launch an AMI for
