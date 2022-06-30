@@ -96,7 +96,7 @@ Outputs:
     Value: !Ref EC2
   InstanceIP:
     Description: Private IP of the instance
-    Value: !GetAtt EC2.PrivateIp
+    Value: !GetAtt PrivateEC2.PrivateIp
   PublicIP:
     Description: Public IP of the instance
     Value: !GetAtt EC2.PublicIp
