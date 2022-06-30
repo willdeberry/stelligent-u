@@ -108,9 +108,13 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 _What was created in addition to the new Auto Scaling Group?_
 
+> A launch configuration and a new ec2 instance.
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+> It recorded the min/max and desired amount of instances. Also recorded the ASG name I provided.
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 

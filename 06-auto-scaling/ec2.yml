@@ -1,0 +1,41 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: auto scalling group module
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: willDeBerry-vpc
+
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: willDeBerry-subnet
+      VpcId: !Ref VPC
+
+  EC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-09a41e26df464c548
+      KeyName: will.deberry.labs
+      InstanceType: t2.micro
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: willDeBerry-ec2
+
+Outputs:
+  EC2Instance:
+    Description: EC2 instance id
+    Value: !Ref EC2
