@@ -133,10 +133,14 @@ Launch an EC2 instance into your VPC.
 
 _After you launch your new stack, can you ssh to the instance?_
 
+> No
+
 ##### Question: Verify Connectivity
 
 _Is there a way that you can verify Internet connectivity from the instance
 without ssh'ing to it?_
+
+> Not to my knowledge. Currently the instance and all the components are all within their own private network and I have no access.
 
 #### Lab 4.1.5: Security Group
 
@@ -147,6 +151,8 @@ Add a security group to your EC2 stack:
 ##### Question: Connectivity
 
 _Can you ssh to your instance yet?_
+
+> Yes
 
 #### Lab 4.1.6: Elastic IP
 
@@ -164,13 +170,19 @@ reachable from anywhere outside your VPC.
 
 _Can you ping your instance now?_
 
+> Yes, still can
+
 ##### Question: SSH
 
 _Can you ssh into your instance now?_
 
+> Yes, still can
+
 ##### Question: Traffic
 
 _If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_
+
+> Yes, I was able to fetch https://google.com via `curl`
 
 At this point, you've made your public EC2 instance an [ssh bastion](https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html).
 We'll make use of that to explore your network below.
@@ -200,19 +212,27 @@ existing instance stack.
 
 _Can you find a way to ssh to this instance?_
 
+> Yes, you can SSH by tunneling through the previously created EC2 instance (eg: use the bastion)
+
 ##### Question: Egress
 
 _If you can ssh to it, can you send traffic out?_
+
+> No, all outbound fails more than likely since there is no internet gateway in the routing
 
 ##### Question: Deleting the Gateway
 
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
 
+> The tunnel hangs and eventually disconnects
+
 ##### Question: Recreating the Gateway
 
 _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
 instance, can you still reach the instance from the outside?_
+
+> Yes, you can use the auto assigned IP address to get into the bastion instance.
 
 Test it out with the AWS console.
 
@@ -232,6 +252,8 @@ First, add one on the public subnet:
 
 _Can you still reach your EC2 instances?_
 
+> Yes. Even changed it to an IP address that wasn't mine and it properly blocked the SSH connection. Can confirm that the ACL is in place and working properly when setup with my public IP.
+
 Add another ACL to your private subnet:
 
 - Only allow traffic from the public subnet.
@@ -242,6 +264,8 @@ Add another ACL to your private subnet:
   public subnet.
 
 _Verify again that you can reach your instance._
+
+> Still good to go
 
 ### Retrospective 4.1
 
