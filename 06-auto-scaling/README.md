@@ -248,8 +248,14 @@ resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cl
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
 
+> `aws-labs cloudformation describe-stack-resources --stack-name willDeBerryStack --query 'StackResources[?LogicalResourceId==`ASG`].PhysicalResourceId' --output text`
+>
+> `aws-labs autoscaling describe-auto-scaling-groups --auto-scaling-group-names willDeBerry-asg --query 'AutoScalingGroups[*].Instances[?LifecycleState==`InService`].InstanceId' --output text`
+
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
+
+> `aws-labs cloudformation describe-stack-resources --stack-name willDeBerryStack | jq -r '.StackResources[] | select(.LogicalResourceId == "ASG") | {PhysicalResourceId} | join("")'`
 
 [Kill that instance](https://docs.aws.amazon.com/cli/latest/reference/ec2/terminate-instances.html).
 Describe your ASG again. Run the awscli command repeatedly until you see
@@ -259,6 +265,8 @@ the new instance launch.
 
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
+
+> 2-3 minutes
 
 #### Lab 6.2.2: Scale Out
 
