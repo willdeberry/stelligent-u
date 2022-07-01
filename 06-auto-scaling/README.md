@@ -294,6 +294,8 @@ using the CLI. Observe Auto Scaling as it launches a replacement
 instance. Take note of what it does with the instance you marked
 unhealthy.
 
+> It automatically created a new instance to replace the one marked `Unhealthy` and then terminated the one that was marked `Unhealthy`.
+
 #### Lab 6.2.4: Troubleshooting Features
 
 Simply killing a failing server feels like an easy remedy when all your
