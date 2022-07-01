@@ -279,9 +279,13 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+> No as you have to alter the `max` property as well.
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+> Near instantly for the config change to go into affect. Not long after that, the new EC2 was created.
 
 #### Lab 6.2.3: Manual Interference
 

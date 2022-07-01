@@ -53,11 +53,11 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       AutoScalingGroupName: willDeBerry-asg
-      DesiredCapacity: 1
+      DesiredCapacity: 2
       LaunchTemplate:
         LaunchTemplateId: !Ref EC2LaunchTemplate
         Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
-      MaxSize: 1
+      MaxSize: 2
       MinSize: 1
       Tags:
         - Key: Name
