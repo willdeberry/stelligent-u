@@ -108,9 +108,13 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 _What was created in addition to the new Auto Scaling Group?_
 
+> A launch configuration and a new ec2 instance.
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+> It recorded the min/max and desired amount of instances. Also recorded the ASG name I provided.
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 
@@ -135,6 +139,8 @@ created for you in Lab 6.1.1.
 _What config info or resources did you have to create explicitly that Amazon
 created for you when launching an ASG from an existing instance?_
 
+> Couldn't use a ASG launch configuration since it was erroring out incorrectly based on the documentation. Tried telling me I needed to add `ImageId` even though I was providing `InstanceId` already which negates this. Went ahead and used `LaunchTemplate` instead and only had to provide `ImageId`, `InstanceType` and `KeyName`.
+
 #### Lab 6.1.3: Launch Config Changes
 
 Modify your launch config by increasing your instances from t2.micro to
@@ -144,11 +150,15 @@ t2.small. Update your stack.
 
 _After updating your stack, did your running instance get replaced or resized?_
 
+> Neither, it's still the old size.
+
 Terminate the instance in your ASG.
 
 ##### Question: Replacement Instance
 
 _Is the replacement instance the new size or the old?_
+
+> New size.
 
 #### Lab 6.1.4: ASG Update Policy
 
@@ -163,9 +173,13 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+> Yes the EC2 instance was replaced with the newer sized one.
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+
+> The launch template was updated/changed
 
 #### Lab 6.1.5: Launch Template
 
@@ -185,6 +199,8 @@ flexible: Templates can be applied to more instance classes (EC2, Spot,
 Reserved), they can specify more information than Configurations, and
 they are versioned instead of replaced with each change.
 
+> Due to a bug I encountered with LaunchConfigs, I ended up only using LaunchTemplates for this entire lab set.
+
 #### Lab 6.1.6: Cleanup
 
 Trace out all the resources created by your stack, and the resources
@@ -194,6 +210,8 @@ associated with those. Then tear your stack down.
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
+
+> Nothing. Everything was deleted.
 
 ### Retrospective 6.1
 
@@ -230,8 +248,14 @@ resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cl
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
 
+> `aws-labs cloudformation describe-stack-resources --stack-name willDeBerryStack --query 'StackResources[?LogicalResourceId==`ASG`].PhysicalResourceId' --output text`
+>
+> `aws-labs autoscaling describe-auto-scaling-groups --auto-scaling-group-names willDeBerry-asg --query 'AutoScalingGroups[*].Instances[?LifecycleState==`InService`].InstanceId' --output text`
+
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
+
+> `aws-labs cloudformation describe-stack-resources --stack-name willDeBerryStack | jq -r '.StackResources[] | select(.LogicalResourceId == "ASG") | {PhysicalResourceId} | join("")'`
 
 [Kill that instance](https://docs.aws.amazon.com/cli/latest/reference/ec2/terminate-instances.html).
 Describe your ASG again. Run the awscli command repeatedly until you see
@@ -241,6 +265,8 @@ the new instance launch.
 
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
+
+> 2-3 minutes
 
 #### Lab 6.2.2: Scale Out
 
@@ -253,9 +279,13 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+> No as you have to alter the `max` property as well.
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+> Near instantly for the config change to go into affect. Not long after that, the new EC2 was created.
 
 #### Lab 6.2.3: Manual Interference
 
@@ -263,6 +293,8 @@ Take one of your instances [out of your ASG manually](http://docs.aws.amazon.com
 using the CLI. Observe Auto Scaling as it launches a replacement
 instance. Take note of what it does with the instance you marked
 unhealthy.
+
+> It automatically created a new instance to replace the one marked `Unhealthy` and then terminated the one that was marked `Unhealthy`.
 
 #### Lab 6.2.4: Troubleshooting Features
 
@@ -283,6 +315,17 @@ check status doesn't change and the scaled group hasn't changed. Put the
 instance back in action. Note the commands you used and the change to
 the lifecycle state of the instance after each change.
 
+> To put it into standby:
+> ```
+> aws-labs autoscaling enter-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg --should-decrement-desired-capacity
+> ```
+>
+> To remove from standby:
+> ```
+> aws-labs autoscaling exit-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg
+> ```
+> Lifecycles went from `InService` -> `Standby` -> `Pending` -> `InService`
+
 Read through the [Scaling Processes](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html#process-types)
 section in the suspending auto-scaling doc. It gives you a lot of
 flexibility. For example, if you have a problematic deployment, you may
@@ -295,11 +338,35 @@ another. Disable Launch, then put an instance on standby and back in
 action again. Note the process you have to go through, including any
 commands you run.
 
+> Suspending launch:
+> ```
+> aws-labs autoscaling suspend-processes --auto-scaling-group-name willDeBerry-asg --scaling-processes Launch
+> ```
+> Placing an instance into standy:
+> ```
+> aws-labs autoscaling enter-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg --should-decrement-desired-capacity
+> ```
+> When attempting to bring an instance back out of standby, I ran the following command and came across the following error:
+> ```
+> aws-labs autoscaling exit-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg
+> ```
+> ```
+> An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup willDeBerry-asg while the Launch process is suspended
+> ```
+> I brought the `Launch` process out of being suspended and then was able to bring the instance back out of `Standby`
+> ```
+> aws-labs autoscaling resume-processes --auto-scaling-group-name willDeBerry-asg --scaling-processes Launch
+> ```
+
 ### Retrospective 6.2
 
 #### Question: CloudWatch
 
 _How would you use AWS CloudWatch to help monitor your ASG?_
+
+> There are a few things you can look for via the Cloudwatch metrics to make sure the health of your ASG is working appropriately.
+> - monitoring of the min/max size of the asg
+> - monitoring of the amount of instances in each state (eg: `InService`, `Pending`, `Standby`, etc)
 
 You can read more [here](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-monitoring.html)
 about CloudWatch monitoring with ASGs.

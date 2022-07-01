@@ -1,0 +1,75 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: auto scalling group module
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: willDeBerry-vpc
+
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: willDeBerry-subnet
+      VpcId: !Ref VPC
+
+  EC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: will.deberry.labs
+      LaunchTemplate:
+        LaunchTemplateId: !Ref EC2LaunchTemplate
+        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: willDeBerry-ec2
+
+  EC2LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-09a41e26df464c548
+        InstanceType: t2.medium
+        KeyName: will.deberry.labs
+      TagSpecifications:
+        - ResourceType: launch-template
+          Tags:
+            - Key: Name
+              Value: willDeBerry-launchTemplate
+
+  ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: willDeBerry-asg
+      DesiredCapacity: 2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref EC2LaunchTemplate
+        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
+      MaxSize: 2
+      MinSize: 1
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: willDeBerry-asg-ec2
+      VPCZoneIdentifier:
+        - !Ref Subnet
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: true
+
+Outputs:
+  EC2Instance:
+    Description: EC2 instance id
+    Value: !Ref EC2
