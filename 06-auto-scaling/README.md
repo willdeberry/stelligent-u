@@ -199,6 +199,8 @@ flexible: Templates can be applied to more instance classes (EC2, Spot,
 Reserved), they can specify more information than Configurations, and
 they are versioned instead of replaced with each change.
 
+> Due to a bug I encountered with LaunchConfigs, I ended up only using LaunchTemplates for this entire lab set.
+
 #### Lab 6.1.6: Cleanup
 
 Trace out all the resources created by your stack, and the resources
@@ -208,6 +210,8 @@ associated with those. Then tear your stack down.
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
+
+> Nothing. Everything was deleted.
 
 ### Retrospective 6.1
 
