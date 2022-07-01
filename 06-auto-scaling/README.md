@@ -315,6 +315,17 @@ check status doesn't change and the scaled group hasn't changed. Put the
 instance back in action. Note the commands you used and the change to
 the lifecycle state of the instance after each change.
 
+> To put it into standby:
+> ```
+> aws-labs autoscaling enter-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg --should-decrement-desired-capacity
+> ```
+>
+> To remove from standby:
+> ```
+> aws-labs autoscaling exit-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg
+> ```
+> Lifecycles went from `InService` -> `Standby` -> `Pending` -> `InService`
+
 Read through the [Scaling Processes](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html#process-types)
 section in the suspending auto-scaling doc. It gives you a lot of
 flexibility. For example, if you have a problematic deployment, you may
@@ -326,6 +337,26 @@ now, so we can't exercise AddToLoadBalancer, but let's take a look at
 another. Disable Launch, then put an instance on standby and back in
 action again. Note the process you have to go through, including any
 commands you run.
+
+> Suspending launch:
+> ```
+> aws-labs autoscaling suspend-processes --auto-scaling-group-name willDeBerry-asg --scaling-processes Launch
+> ```
+> Placing an instance into standy:
+> ```
+> aws-labs autoscaling enter-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg --should-decrement-desired-capacity
+> ```
+> When attempting to bring an instance back out of standby, I ran the following command and came across the following error:
+> ```
+> aws-labs autoscaling exit-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name willDeBerry-asg
+> ```
+> ```
+> An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup willDeBerry-asg while the Launch process is suspended
+> ```
+> I brought the `Launch` process out of being suspended and then was able to bring the instance back out of `Standby`
+> ```
+> aws-labs autoscaling resume-processes --auto-scaling-group-name willDeBerry-asg --scaling-processes Launch
+> ```
 
 ### Retrospective 6.2
 
