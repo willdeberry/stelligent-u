@@ -364,6 +364,10 @@ commands you run.
 
 _How would you use AWS CloudWatch to help monitor your ASG?_
 
+> There are a few things you can look for via the Cloudwatch metrics to make sure the health of your ASG is working appropriately.
+> - monitoring of the min/max size of the asg
+> - monitoring of the amount of instances in each state (eg: `InService`, `Pending`, `Standby`, etc)
+
 You can read more [here](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-monitoring.html)
 about CloudWatch monitoring with ASGs.
 
