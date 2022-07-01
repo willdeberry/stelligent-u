@@ -173,9 +173,13 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+> Yes the EC2 instance was replaced with the newer sized one.
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+
+> The launch template was updated/changed
 
 #### Lab 6.1.5: Launch Template
 
