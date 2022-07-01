@@ -139,6 +139,8 @@ created for you in Lab 6.1.1.
 _What config info or resources did you have to create explicitly that Amazon
 created for you when launching an ASG from an existing instance?_
 
+> Couldn't use a ASG launch configuration since it was erroring out incorrectly based on the documentation. Tried telling me I needed to add `ImageId` even though I was providing `InstanceId` already which negates this. Went ahead and used `LaunchTemplate` instead and only had to provide `ImageId`, `InstanceType` and `KeyName`.
+
 #### Lab 6.1.3: Launch Config Changes
 
 Modify your launch config by increasing your instances from t2.micro to

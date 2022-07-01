@@ -27,13 +27,43 @@ Resources:
   EC2:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-09a41e26df464c548
       KeyName: will.deberry.labs
-      InstanceType: t2.micro
+      LaunchTemplate:
+        LaunchTemplateId: !Ref EC2LaunchTemplate
+        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
       SubnetId: !Ref Subnet
       Tags:
         - Key: Name
           Value: willDeBerry-ec2
+
+  EC2LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-09a41e26df464c548
+        InstanceType: t2.micro
+        KeyName: will.deberry.labs
+      TagSpecifications:
+        - ResourceType: launch-template
+          Tags:
+            - Key: Name
+              Value: willDeBerry-launchTemplate
+
+  ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      DesiredCapacity: 1
+      LaunchTemplate:
+        LaunchTemplateId: !Ref EC2LaunchTemplate
+        Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
+      MaxSize: 1
+      MinSize: 1
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: willDeBerry-asg-ec2
+      VPCZoneIdentifier:
+        - !Ref Subnet
 
 Outputs:
   EC2Instance:
