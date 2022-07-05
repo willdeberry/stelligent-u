@@ -94,9 +94,13 @@ haywire!
 _What can be controlled with the interval/healthy threshold/unhealthy threshold
 settings?_
 
+> How often and how exactly the health checks for the load balancer are ran.
+
 ##### Question: ASG Behavior
 
 _What's happening to the instances in the ASG? How do you know?_
+
+> They eventually get swapped out with a new instance. You can see this via the `Health Status` column on the `Targets` tab of the target group.
 
 #### Lab 7.1.3: Secure Sockets
 
