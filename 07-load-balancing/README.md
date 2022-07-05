@@ -69,6 +69,8 @@ many instances with an ALB.
 _What is the benefit of breaking up the load balancer into specific listeners
 and target groups?_
 
+> Separation of concerns. Target groups maintain the association to any instances while the listener is only worried about the routing.
+
 #### Lab 7.1.2: Health Checks
 
 Now, let's update our health check to see what happens when things go
@@ -92,9 +94,13 @@ haywire!
 _What can be controlled with the interval/healthy threshold/unhealthy threshold
 settings?_
 
+> How often and how exactly the health checks for the load balancer are ran.
+
 ##### Question: ASG Behavior
 
 _What's happening to the instances in the ASG? How do you know?_
+
+> They eventually get swapped out with a new instance. You can see this via the `Health Status` column on the `Targets` tab of the target group.
 
 #### Lab 7.1.3: Secure Sockets
 
@@ -122,10 +128,14 @@ Let's fix that bad health check endpoint and add an https listener.
 
 _What is the trade off of going with a more secure SSL policy?_
 
+> More overhead on intial setup. There are no cons for using a more secure setup once it is up and running though.
+
 ##### Question: Certificate Management
 
 _We imported a local certificate into ACM, what other options do you have? How
 do those processes work?_
+
+> Request a cert. This is a public cert that is created by AWS for you to use.
 
 #### Lab 7.1.4: Cleanup
 
@@ -138,6 +148,8 @@ do those processes work?_
 
 Discuss with your mentor: *What are some of the common cloud architectures
 where you would want to implement an ALB?*
+
+> Web servers, build servers and potentially bastion/ssh proxy boxes.
 
 ## Further reading
 

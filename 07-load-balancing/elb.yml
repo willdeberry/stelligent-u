@@ -1,0 +1,68 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      SecurityGroups:
+        - !ImportValue willDeBerry-sg-http
+      Subnets:
+        - !ImportValue willDeBerry-subnet1
+        - !ImportValue willDeBerry-subnet2
+      Tags:
+        - Key: Name
+          Value: willDeBerry-alb
+      Type: application
+
+  ELBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 20
+      HealthCheckPath: '/index.html'
+      HealthCheckPort: traffic-port
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      Tags:
+        - Key: Name
+          Value: willDeBerry-elb
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 20
+      UnhealthyThresholdCount: 2
+      VpcId: !ImportValue willDeBerry-vpc
+
+  ELBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref ELBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+
+  ELBListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: arn:aws:acm:us-east-1:324320755747:certificate/bc121b1f-069d-4336-92c5-e3e73221b30d
+      DefaultActions:
+        - TargetGroupArn: !Ref ELBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-FS-2018-06
+
+Outputs:
+  TargetGroup:
+    Description: Id of the target group
+    Value: !Ref ELBTargetGroup
+    Export:
+      Name: willDeBerry-target-group
