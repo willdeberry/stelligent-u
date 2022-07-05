@@ -149,6 +149,8 @@ do those processes work?_
 Discuss with your mentor: *What are some of the common cloud architectures
 where you would want to implement an ALB?*
 
+> Web servers, build servers and potentially bastion/ssh proxy boxes.
+
 ## Further reading
 
 - [Run Containerized Microservices with Amazon ECS and Application Load Balancer](https://aws.amazon.com/blogs/compute/microservice-delivery-with-amazon-ecs-and-application-load-balancers/)
