@@ -128,10 +128,14 @@ Let's fix that bad health check endpoint and add an https listener.
 
 _What is the trade off of going with a more secure SSL policy?_
 
+> More overhead on intial setup. There are no cons for using a more secure setup once it is up and running though.
+
 ##### Question: Certificate Management
 
 _We imported a local certificate into ACM, what other options do you have? How
 do those processes work?_
+
+> Request a cert. This is a public cert that is created by AWS for you to use.
 
 #### Lab 7.1.4: Cleanup
 

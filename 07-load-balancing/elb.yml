@@ -21,7 +21,7 @@ Resources:
     Properties:
       HealthCheckEnabled: true
       HealthCheckIntervalSeconds: 20
-      HealthCheckPath: '/BADindex.html'
+      HealthCheckPath: '/index.html'
       HealthCheckPort: traffic-port
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
@@ -42,10 +42,23 @@ Resources:
     Properties:
       DefaultActions:
         - TargetGroupArn: !Ref ELBTargetGroup
-          type: forward
+          Type: forward
       LoadBalancerArn: !Ref ALB
       Port: 80
       Protocol: HTTP
+
+  ELBListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: arn:aws:acm:us-east-1:324320755747:certificate/bc121b1f-069d-4336-92c5-e3e73221b30d
+      DefaultActions:
+        - TargetGroupArn: !Ref ELBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-FS-2018-06
 
 Outputs:
   TargetGroup:
