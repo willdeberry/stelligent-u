@@ -69,6 +69,8 @@ many instances with an ALB.
 _What is the benefit of breaking up the load balancer into specific listeners
 and target groups?_
 
+> Separation of concerns. Target groups maintain the association to any instances while the listener is only worried about the routing.
+
 #### Lab 7.1.2: Health Checks
 
 Now, let's update our health check to see what happens when things go
