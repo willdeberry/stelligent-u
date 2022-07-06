@@ -53,10 +53,43 @@ log group and log stream:
 
 - Name the log group based on your username: *first.last*.c9logs
 
+> `aws-labs logs create-log-group --log-group-name will.deberry.c9logs`
+
 - Name the log stream named c9.training in your log group.
+
+> `aws-labs logs create-log-stream --log-group-name will.deberry.c9logs --log-stream-name c9.training`
 
 When you're done, list the log groups and the log streams to confirm
 they exist.
+
+> ```
+> aws-labs logs describe-log-groups --log-group-name-prefix will.deberry
+> {
+>     "logGroups": [
+>         {
+>             "logGroupName": "will.deberry.c9logs",
+>             "creationTime": 1657112269124,
+>             "metricFilterCount": 0,
+>             "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:*",
+>             "storedBytes": 0
+>         }
+>     ]
+> }
+> ```
+
+> ```
+> aws-labs logs describe-log-streams --log-group-name will.deberry.c9logs
+> {
+>     "logStreams": [
+>         {
+>             "logStreamName": "c9.training",
+>             "creationTime": 1657112326108,
+>             "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:log-stream:c9.training",
+>             "storedBytes": 0
+>         }
+>     ]
+> }
+> ```
 
 #### Lab 8.1.2: The CloudWatch agent
 
