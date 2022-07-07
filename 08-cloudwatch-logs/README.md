@@ -159,10 +159,43 @@ lifecycle of the logs.
 - Use the AWS CLI to [set the retention policy](https://docs.aws.amazon.com/cli/latest/reference/logs/put-retention-policy.htm)
   of your log group to 60 days.
 
+  > `aws-labs logs put-retention-policy --log-group-name will.deberry.c9logs --retention-in-days 60`
+
 - Use the CLI to review the policy in your log group.
+
+  > `aws-labs logs describe-log-groups --log-group-name will.deberry.c9logs`
+  > ```
+  > {
+  >     "logGroups": [
+  >         {
+  >             "logGroupName": "will.deberry.c9logs",
+  >             "creationTime": 1657112269124,
+  >             "retentionInDays": 60,
+  >             "metricFilterCount": 0,
+  >             "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:*",
+  >             "storedBytes": 0
+  >         }
+  >     ]
+  > }
+  > ```
 
 - Set the retention policy to the maximum allowed time, and review the
   change again to double-check.
+
+  > ```
+  > {
+  >   "logGroups": [
+  >       {
+  >           "logGroupName": "will.deberry.c9logs",
+  >           "creationTime": 1657112269124,
+  >           "retentionInDays": 3653,
+  >           "metricFilterCount": 0,
+  >           "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:*",
+  >           "storedBytes": 0
+  >       }
+  >   ]
+  > }
+  > ```
 
 #### Lab 8.1.5: Clean up
 
