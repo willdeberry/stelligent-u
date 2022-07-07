@@ -125,6 +125,16 @@ repo:
 
 - Use the AWS CLI to display the log events for your group and stream from 8.1.1.
 
+> `aws-labs logs get-log-events --log-group-name will.deberry.c9logs --log-stream-name c9.training`
+>
+> ```
+>         {
+>            "timestamp": 1657212130092,
+>            "message": "2022-07-07T16:42:09Z I! [outputs.cloudwatchlogs] First time sending logs to will.deberry.c9logs/c9.training since startup so sequenceToken is nil, learned new token:(0xc0007d0070): The given sequenceToken is invalid. The next expected sequenceToken is: 49609993921308956123972343382119640721541944802625454386",
+>            "ingestionTime": 1657212145118
+>        },
+> ```
+
 > *Note:* logs may take several minutes to appear.
 
 #### Lab 8.1.3: 3rd party tool awslogs
