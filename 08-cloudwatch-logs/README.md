@@ -216,8 +216,12 @@ limitations are.*
 
 - What are the minimum and maximum retention times?
 
+  > 1 day and never delete
+
 - Instead of keeping data in CW Logs forever, can you do anything else
   with them? What might a useful lifecycle for logs look like?
+
+  > Could run metrics or insights off of the logs. 30 day log rotation would be useful to have enough data but not keep things forever.
 
 ## Lesson 8.2: CloudWatch Logs with CloudTrail events
 
