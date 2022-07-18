@@ -88,9 +88,21 @@ Using API gateway to run a Lambda function.
 - Use the AWS CLI to call the API gateway which will call your Lambda
   function.
 
+  > `aws-labs apigateway test-invoke-method --rest-api-id ku1na9m4bc --resource-id dpymb0 --http-method GET`
+  > ```
+  > "status": 200,
+  > "body": "\"Hello AWS!\"",
+  > ```
+
 - Lambdas can take a payload like JSON as input. Rewrite the function
   to take a JSON payload and simply return the payload, or an item
   from the payload.
+
+  > `aws-labs apigateway test-invoke-method --rest-api-id ku1na9m4bc --resource-id dpymb0 --http-method POST --body '{"test": "json"}'`
+  > ```
+  > "status": 200,
+  > "body": "\"{\\\"test\\\": \\\"json\\\"}\"",
+  > ```
 
 #### Lab 9.1.3: Lambda & CloudFormation with awscli
 
@@ -104,8 +116,26 @@ Use the AWS CLI to create Lambda functions:
   create the CloudFormation stack. Note: The "package" command will
   need an S3 bucket to temporarily store the deployment package.
 
+  > `aws-labs cloudformation package --template-file 9.1.2.yml --s3-bucket willdeberry-bucket --output-template-file 9.1.3.yml`
+  > ```
+  > Successfully packaged artifacts and wrote output template to file 9.1.3.yml.
+  > Execute the following command to deploy the packaged template
+  > aws cloudformation deploy --template-file /Users/will/code/stelligent/stelligent-u/09-lambda/9.1.3.yml --stack-name <YOUR STACK NAME>
+  > ```
+
+  > `aws-labs cloudformation deploy --template-file /Users/will/code/stelligent/stelligent-u/09-lambda/9.1.3.yml --stack-name willDeBerry-stack --capabilities CAPABILITY_IAM`
+  > ```
+  > Waiting for changeset to be created..
+  > Waiting for stack create/update to complete
+  > Successfully created/updated stack - willDeBerry-stack
+  > ```
+
 - Use the API gateway to make a test call to the lambda to confirm
   it's working.
+
+  > `aws-labs apigateway test-invoke-method --rest-api-id pepj09xlyj --resource-id 0a213m --http-method POST --body '{"test": "json"}'`
+
+  > `"status": 200`
 
 ### Retrospective 9.1
 
