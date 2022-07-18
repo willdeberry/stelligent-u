@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: LambdaExecution
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            Resource:
+              Fn::GetAtt:
+              - Table
+              - Arn
+      Tags:
+      - Key: Name
+        Value: willDeBerry-lambdaRole
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - apigateway.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: LambdaExecution
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - Lambda
+              - Arn
+  Lambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: willdeberry-bucket
+        S3Key: a75e4742481d579e018baa7a9105f3c7
+      FunctionName: willDeBerry-lambda
+      Handler: lambda-code.lambda_handler
+      Role:
+        Fn::GetAtt:
+        - LambdaRole
+        - Arn
+      Runtime: python3.9
+      Tags:
+      - Key: Name
+        Value: willDeBerry-lambda
+  LambdaPerm:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: Lambda
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: willDeBerry-api
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+        - ApiGatewayRestApi
+        - RootResourceId
+      PathPart: '{proxy+}'
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: ANY
+      Integration:
+        Type: AWS_PROXY
+        Credentials:
+          Fn::GetAtt:
+          - ApiGatewayRole
+          - Arn
+        IntegrationHttpMethod: POST
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Lambda.Arn}/invocations
+      ResourceId:
+        Ref: ApiResource
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiMethod
+    Properties:
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: item
+        AttributeType: S
+      KeySchema:
+      - AttributeName: item
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: willDeBerry-table
+Outputs:
+  ResourceID:
+    Value:
+      Ref: ApiResource
+  RestApiID:
+    Value:
+      Ref: ApiGatewayRestApi
