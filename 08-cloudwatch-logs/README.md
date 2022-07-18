@@ -53,10 +53,43 @@ log group and log stream:
 
 - Name the log group based on your username: *first.last*.c9logs
 
+> `aws-labs logs create-log-group --log-group-name will.deberry.c9logs`
+
 - Name the log stream named c9.training in your log group.
+
+> `aws-labs logs create-log-stream --log-group-name will.deberry.c9logs --log-stream-name c9.training`
 
 When you're done, list the log groups and the log streams to confirm
 they exist.
+
+> ```
+> aws-labs logs describe-log-groups --log-group-name-prefix will.deberry
+> {
+>     "logGroups": [
+>         {
+>             "logGroupName": "will.deberry.c9logs",
+>             "creationTime": 1657112269124,
+>             "metricFilterCount": 0,
+>             "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:*",
+>             "storedBytes": 0
+>         }
+>     ]
+> }
+> ```
+
+> ```
+> aws-labs logs describe-log-streams --log-group-name will.deberry.c9logs
+> {
+>     "logStreams": [
+>         {
+>             "logStreamName": "c9.training",
+>             "creationTime": 1657112326108,
+>             "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:log-stream:c9.training",
+>             "storedBytes": 0
+>         }
+>     ]
+> }
+> ```
 
 #### Lab 8.1.2: The CloudWatch agent
 
@@ -92,6 +125,16 @@ repo:
 
 - Use the AWS CLI to display the log events for your group and stream from 8.1.1.
 
+> `aws-labs logs get-log-events --log-group-name will.deberry.c9logs --log-stream-name c9.training`
+>
+> ```
+>         {
+>            "timestamp": 1657212130092,
+>            "message": "2022-07-07T16:42:09Z I! [outputs.cloudwatchlogs] First time sending logs to will.deberry.c9logs/c9.training since startup so sequenceToken is nil, learned new token:(0xc0007d0070): The given sequenceToken is invalid. The next expected sequenceToken is: 49609993921308956123972343382119640721541944802625454386",
+>            "ingestionTime": 1657212145118
+>        },
+> ```
+
 > *Note:* logs may take several minutes to appear.
 
 #### Lab 8.1.3: 3rd party tool awslogs
@@ -116,10 +159,43 @@ lifecycle of the logs.
 - Use the AWS CLI to [set the retention policy](https://docs.aws.amazon.com/cli/latest/reference/logs/put-retention-policy.htm)
   of your log group to 60 days.
 
+  > `aws-labs logs put-retention-policy --log-group-name will.deberry.c9logs --retention-in-days 60`
+
 - Use the CLI to review the policy in your log group.
+
+  > `aws-labs logs describe-log-groups --log-group-name will.deberry.c9logs`
+  > ```
+  > {
+  >     "logGroups": [
+  >         {
+  >             "logGroupName": "will.deberry.c9logs",
+  >             "creationTime": 1657112269124,
+  >             "retentionInDays": 60,
+  >             "metricFilterCount": 0,
+  >             "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:*",
+  >             "storedBytes": 0
+  >         }
+  >     ]
+  > }
+  > ```
 
 - Set the retention policy to the maximum allowed time, and review the
   change again to double-check.
+
+  > ```
+  > {
+  >   "logGroups": [
+  >       {
+  >           "logGroupName": "will.deberry.c9logs",
+  >           "creationTime": 1657112269124,
+  >           "retentionInDays": 3653,
+  >           "metricFilterCount": 0,
+  >           "arn": "arn:aws:logs:us-east-1:324320755747:log-group:will.deberry.c9logs:*",
+  >           "storedBytes": 0
+  >       }
+  >   ]
+  > }
+  > ```
 
 #### Lab 8.1.5: Clean up
 
@@ -140,8 +216,12 @@ limitations are.*
 
 - What are the minimum and maximum retention times?
 
+  > 1 day and never delete
+
 - Instead of keeping data in CW Logs forever, can you do anything else
   with them? What might a useful lifecycle for logs look like?
+
+  > Could run metrics or insights off of the logs. 30 day log rotation would be useful to have enough data but not keep things forever.
 
 ## Lesson 8.2: CloudWatch Logs with CloudTrail events
 
