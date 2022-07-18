@@ -88,9 +88,21 @@ Using API gateway to run a Lambda function.
 - Use the AWS CLI to call the API gateway which will call your Lambda
   function.
 
+  > `aws-labs apigateway test-invoke-method --rest-api-id ku1na9m4bc --resource-id dpymb0 --http-method GET`
+  > ```
+  > "status": 200,
+  > "body": "\"Hello AWS!\"",
+  > ```
+
 - Lambdas can take a payload like JSON as input. Rewrite the function
   to take a JSON payload and simply return the payload, or an item
   from the payload.
+
+  > `aws-labs apigateway test-invoke-method --rest-api-id ku1na9m4bc --resource-id dpymb0 --http-method POST --body '{"test": "json"}'`
+  > ```
+  > "status": 200,
+  > "body": "\"{\\\"test\\\": \\\"json\\\"}\"",
+  > ```
 
 #### Lab 9.1.3: Lambda & CloudFormation with awscli
 
