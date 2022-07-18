@@ -1,0 +1,14 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: willdeberry-bucket
+      AccessControl: BucketOwnerFullControl
+      Tags:
+        - Key: user
+          Value: will.deberry.labs
+        - Key: stelligent-u-lesson
+          Value: 8
