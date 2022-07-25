@@ -114,6 +114,8 @@ Delete your KMS CFN Stack.
 
 _What happened to your CMK? Why?_
 
+Gets put into a pending deletion state. This happens to give you time to stop deletion since all things encrypted with the key are lost once the key is destroyed.
+
 ### Retrospective 10.2
 
 Check out the code for [stelligent/crossing](https://github.com/stelligent/crossing)
