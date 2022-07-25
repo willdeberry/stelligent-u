@@ -67,9 +67,13 @@ Use the KMS CLI to now decrypt a ciphertext file.
 _For decrypting the ciphertext file, why didn't you have to specify a key? How
 did you have permission to decrypt?_
 
+> Since my user was key admin and user it wasn't required since I already had full access
+
 #### Question: KMS Alias
 
 _Why is it beneficial to use a KMS Alias?_
+
+Provides an easy human readable name to use vs some machine ID
 
 ## Lesson 10.2: Implementation of KMS Keys in S3
 
@@ -109,6 +113,8 @@ Delete your KMS CFN Stack.
 ##### Question: CMK
 
 _What happened to your CMK? Why?_
+
+Gets put into a pending deletion state. This happens to give you time to stop deletion since all things encrypted with the key are lost once the key is destroyed.
 
 ### Retrospective 10.2
 
