@@ -2,6 +2,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
+  StackName:
+    Type: String
+    Default: willDeberryLab12
+
   BucketName:
     Type: String
     Description: S3 Bucket Name
@@ -10,6 +14,22 @@ Parameters:
   StackBucketName:
     Type: String
     Default: willbeberrydeplybucket
+
+  PipelineName:
+    Type: String
+    Default: will.deberry.pipeline.12
+
+  ConnectionArn:
+    Type: String
+    Default: arn:aws:codestar-connections:us-east-1:324320755747:connection/53cf3d97-2aeb-4416-a161-3c3e69eb3fa1
+
+  RepoName:
+    Type: String
+    Default: willdeberry/stelligent-u
+
+  RepoBranch:
+    Type: String
+    Default: 12-codepipeline
 
 Resources:
   Bucket:
@@ -146,7 +166,7 @@ Resources:
       ArtifactStore:
         Location: !Ref Bucket
         Type: S3
-      Name: will.deberry.pipeline.12.source
+      Name: !Ref PipelineName
       RoleArn: !GetAtt PipelineRole.Arn
       Stages:
         - Name: Source
@@ -160,9 +180,9 @@ Resources:
               - Name: SourceOutput
             RunOrder: 1
             Configuration:
-              ConnectionArn: arn:aws:codestar-connections:us-east-1:324320755747:connection/53cf3d97-2aeb-4416-a161-3c3e69eb3fa1
-              FullRepositoryId: willdeberry/stelligent-u
-              BranchName: 12-codepipeline
+              ConnectionArn: !Ref ConnectionArn
+              FullRepositoryId: !Ref RepoName
+              BranchName: !Ref RepoBranch
               OutputArtifactFormat: CODE_ZIP
             Name: AppSource
         - Name: Build
@@ -188,7 +208,7 @@ Resources:
               RunOrder: 3
               Configuration:
                 ActionMode: CREATE_UPDATE
-                StackName: willDeberryLab12
+                StackName: !Ref StackName
                 RoleArn: !GetAtt CFNRole.Arn
                 TemplatePath: SourceOutput::12-codepipeline/bucket.yaml
                 ParameterOverrides: !Sub '{"BucketNameParameter": "${StackBucketName}"}'
@@ -208,6 +228,3 @@ Resources:
               InputArtifacts:
                 - Name: SourceOutput
               Name: Test
-      Tags:
-        - Key: Name
-          Value: will.deberry.pipeline.12
