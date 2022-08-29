@@ -1,0 +1,149 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  StackName:
+    Type: String
+    Default: willDeberryLab12
+
+  BucketName:
+    Type: String
+    Description: S3 Bucket Name
+    Default: will.deberry.12
+
+  PipelineName:
+    Type: String
+    Default: will.deberry.pipeline.12
+
+  ConnectionArn:
+    Type: String
+    Default: arn:aws:codestar-connections:us-east-1:324320755747:connection/53cf3d97-2aeb-4416-a161-3c3e69eb3fa1
+
+  RepoName:
+    Type: String
+    Default: willdeberry/stelligent-u
+
+  RepoBranch:
+    Type: String
+    Default: 12-codepipeline
+
+  TemplatePath:
+    Type: String
+    Default: 12-codepipeline/12.2.1.yml
+
+Resources:
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: Source
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                  - s3:*
+                  - cloudformation:CreateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:UpdateStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:SetStackPolicy
+                  - cloudformation:ValidateTemplate
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuildBatches
+                  - codebuild:StartBuildBatch
+                  - codestar-connections:UseConnection
+                Resource: '*'
+
+  CFNRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Location: !Ref Bucket
+        Type: S3
+      Name: !Ref PipelineName
+      RoleArn: !GetAtt PipelineRole.Arn
+      Stages:
+        - Name: Source
+          Actions:
+          - ActionTypeId:
+              Category: Source
+              Owner: AWS
+              Provider: CodeStarSourceConnection
+              Version: 1
+            OutputArtifacts:
+              - Name: SourceOutput
+            RunOrder: 1
+            Configuration:
+              ConnectionArn: !Ref ConnectionArn
+              FullRepositoryId: !Ref RepoName
+              BranchName: !Ref RepoBranch
+              OutputArtifactFormat: CODE_ZIP
+            Name: Source
+        - Name: Deploy
+          Actions:
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              RunOrder: 1
+              Configuration:
+                ActionMode: CHANGE_SET_REPLACE
+                ChangeSetName: Incoming
+                Capabilities: CAPABILITY_IAM
+                StackName: !Ref StackName
+                RoleArn: !GetAtt CFNRole.Arn
+                TemplatePath: !Sub SourceOutput::${TemplatePath}
+              InputArtifacts:
+                - Name: SourceOutput
+              Name: CreateChangeSet
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              RunOrder: 2
+              Configuration:
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: Incoming
+                Capabilities: CAPABILITY_IAM
+                StackName: !Ref StackName
+                RoleArn: !GetAtt CFNRole.Arn
+                TemplatePath: !Sub SourceOutput::${TemplatePath}
+              InputArtifacts:
+                - Name: SourceOutput
+              Name: DeployChangeSet
